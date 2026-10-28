@@ -1,5 +1,5 @@
-// Rapport - v1.0.0 - 28/10/2026
-const VERSION='v1.0.0';
+// Rapport - v1.4.0 - 28/10/2026
+const VERSION='v1.4.0';
 const CACHE='rapport-'+VERSION;
 const APP_FILES=[
   './','./index.html','./manifest.webmanifest',
@@ -7,8 +7,7 @@ const APP_FILES=[
 ];
 const FONT_CSS='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap';
 const CDN_FILES=[
-  'https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js',
-  'https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js'
+  'https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js'
 ];
 const CACHEABLE_HOSTS=['cdn.jsdelivr.net','fonts.googleapis.com','fonts.gstatic.com'];
 
