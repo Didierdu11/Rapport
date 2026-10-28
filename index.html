@@ -66,6 +66,14 @@ button:hover{filter:brightness(1.06)}button:active{transform:scale(.98)}
 .edit{background:var(--soft)}.del{background:#fee2e2;color:var(--danger)}
 .add-row{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;padding:6px 12px 12px}
 .add-row button{margin:0}
+.titlerow{display:flex;gap:8px;align-items:center}
+.titlerow input{flex:1;min-width:0}
+.tbadge{flex:none;background:var(--cream);color:var(--plum);border:1.5px solid var(--gold);border-radius:999px;padding:8px 12px;font-weight:700;font-size:.9rem;white-space:nowrap}
+.chk{display:flex;gap:8px;align-items:center;font-weight:500;margin:10px 0 0}
+.chk input{width:auto;margin:0}
+.serie-time,.ptime{flex:none;background:var(--cream);color:var(--plum);border-radius:999px;padding:4px 10px;font-weight:700;font-size:.82rem;white-space:nowrap}
+.ptime{margin-left:6px;background:#fff3dc}
+.timerow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .exports{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
 .exports[hidden]{display:none}
 .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
@@ -121,7 +129,9 @@ button:hover{filter:brightness(1.06)}button:active{transform:scale(.98)}
   <label for="rDate">Date</label>
   <input id="rDate" type="date">
   <label for="rTitle">Titre général du rapport</label>
-  <input id="rTitle" placeholder="Ex. Visite de l’atelier de production">
+  <div class="titlerow"><input id="rTitle" placeholder="Ex. Visite de l’atelier de production"><span class="tbadge" id="totBadge" title="Temps total : somme des temps des photos">⏱ 0 min</span></div>
+  <p class="hint" id="totDetail" style="margin:6px 0 0"></p>
+  <label class="chk"><input type="checkbox" id="hideTimes"> Masquer tous les temps</label>
   <label for="rComment">Commentaire général <span class="opt">(optionnel)</span></label>
   <div class="textarea-wrap">
     <textarea id="rComment" placeholder="Ex. Contexte, conclusion, remarques d’ensemble…"></textarea>
@@ -181,6 +191,8 @@ button:hover{filter:brightness(1.06)}button:active{transform:scale(.98)}
       <textarea id="edComment" placeholder="Ex. Fuite constatée sur le raccord."></textarea>
       <button type="button" class="mic-btn" id="micPhoto" title="Dictée vocale" aria-label="Dictée vocale">🎙️</button>
     </div>
+    <label>Temps passé <span class="opt">(optionnel)</span></label>
+    <div class="timerow"><input id="edH" type="number" inputmode="numeric" min="0" max="99" placeholder="Heures (hh)" aria-label="Heures"><input id="edM" type="number" inputmode="numeric" min="0" max="999" placeholder="Minutes (min)" aria-label="Minutes"></div>
     <button class="green" id="edOk" style="margin-top:10px">✅ Valider la photo</button>
   </div>
 </div>
@@ -214,24 +226,31 @@ button:hover{filter:brightness(1.06)}button:active{transform:scale(.98)}
       <li>Touchez « ＋ Ajouter un titre » pour créer la série suivante : <b>B</b> (photos B1, B2…), puis <b>C</b>, etc.</li>
     </ol>
 
-    <h3>4. Modifier ou supprimer</h3>
+    <h3>4. Temps (optionnel)</h3>
+    <ul>
+      <li>Dans l’éditeur de chaque photo, indiquez un temps en heures (hh) et minutes (min).</li>
+      <li>Chaque titre affiche la somme de ses photos (A1, A2…). À côté du titre général, le <b>temps total</b> additionne tous les titres, avec le détail A, B, C…</li>
+      <li>« Masquer tous les temps » les retire de l’écran et des exports Word et PDF. Les temps restent enregistrés et se modifient toujours depuis ✏️.</li>
+    </ul>
+
+    <h3>5. Modifier ou supprimer</h3>
     <ul>
       <li>✏️ rouvre la photo avec ses croix et ronds : vous pouvez en ajouter, en retirer et changer le commentaire.</li>
       <li>🗑 supprime une photo ; la numérotation se met à jour toute seule.</li>
       <li>🗑 dans l’en-tête violet supprime un titre entier avec ses photos.</li>
     </ul>
 
-    <h3>5. Sauvegarde automatique</h3>
+    <h3>6. Sauvegarde automatique</h3>
     <p>Tout est enregistré en continu sur l’appareil. Si vous fermez l’application, le rapport est retrouvé à la réouverture. « 🆕 Nouveau rapport » efface le rapport en cours (confirmation demandée).</p>
 
-    <h3>6. Exporter</h3>
+    <h3>7. Exporter</h3>
     <ul>
-      <li><b>Word</b> : document mis en page avec bannière, titre, commentaire général, puis chaque titre (A, B, C…) suivi de ses photos et commentaires.</li>
+      <li><b>Word</b> : document mis en page avec bannière, titre, commentaire général, puis chaque titre (A, B, C…) suivi de ses photos et commentaires. Photos de même taille, 3 par ligne, au moins 6 par page.</li>
       <li><b>PDF</b> : même structure, prête à envoyer ou imprimer.</li>
     </ul>
     <p>Sur iPhone, une fenêtre de partage s’ouvre pour enregistrer ou envoyer le fichier.</p>
 
-    <h3>7. Mise à jour</h3>
+    <h3>8. Mise à jour</h3>
     <p>L’application se met à jour automatiquement quand Internet est disponible. Le bouton « 🔄 Vérifier la mise à jour » force la vérification.</p>
   </div>
 </div>
@@ -239,9 +258,8 @@ button:hover{filter:brightness(1.06)}button:active{transform:scale(.98)}
 <div class="save-status" id="saveStatus" role="status"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js"></script>
 <script>
-const APP_VERSION='v1.0.0';const APP_DATE='28/10/2026';
+const APP_VERSION='v1.1.0';const APP_DATE='28/10/2026';
 (()=>{
 const $=id=>document.getElementById(id);
 const c=$('canvas'),x=c.getContext('2d'),video=$('video');
@@ -250,7 +268,7 @@ const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOS
 const fmtDate=d=>d?d.split('-').reverse().join('/'):'';
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const letter=n=>{const A='ABCDEFGHIJKLMNOPQRSTUVWXYZ';return n<26?A[n]:A[Math.floor(n/26)-1]+A[n%26]};
-const newState=()=>({name:'',date:today(),title:'',comment:'',series:[{id:uid(),title:'',photos:[]}]});
+const newState=()=>({name:'',date:today(),title:'',comment:'',hideTimes:false,series:[{id:uid(),title:'',photos:[]}]});
 let S=newState(),ed=null,target=null,stream=null;
 
 /* ===== Sauvegarde automatique (IndexedDB) ===== */
@@ -268,26 +286,33 @@ try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}ca
 
 /* ===== Champs généraux ===== */
 const TOP={rName:'name',rDate:'date',rTitle:'title',rComment:'comment'};
-function fillTop(){for(const id in TOP)$(id).value=S[TOP[id]]||''}
+function fillTop(){for(const id in TOP)$(id).value=S[TOP[id]]||'';$('hideTimes').checked=!!S.hideTimes}
+$('hideTimes').addEventListener('change',()=>{S.hideTimes=$('hideTimes').checked;render();saveNow()});
 for(const id in TOP)$(id).addEventListener('input',()=>{S[TOP[id]]=$(id).value;autoSave()});
 
 /* ===== Liste des titres et photos ===== */
 function render(){
   $('series').innerHTML=S.series.map((s,si)=>{
     const L=letter(si);
-    const ph=s.photos.map((p,pi)=>`<div class="pcard"><img src="${p.image}" alt="Photo ${L}${pi+1}"><div class="pinfo"><b>${L}${pi+1}</b><p>${p.comment?esc(p.comment):'<i>Sans commentaire</i>'}</p></div><div class="pact"><button class="edit" data-act="edit" data-si="${si}" data-pi="${pi}" aria-label="Modifier ${L}${pi+1}">✏️</button><button class="del" data-act="delPhoto" data-si="${si}" data-pi="${pi}" aria-label="Supprimer ${L}${pi+1}">🗑</button></div></div>`).join('');
-    return `<section class="serie"><div class="serie-head"><span class="serie-badge">${L}</span><input class="serie-title" data-si="${si}" value="${esc(s.title)}" placeholder="Titre ${L}" aria-label="Titre ${L}">${S.series.length>1?`<button class="del-serie" data-act="delSerie" data-si="${si}" aria-label="Supprimer le titre ${L}">🗑</button>`:''}</div><div class="photos">${ph}</div><div class="add-row"><button class="blue" data-act="cam" data-si="${si}">📷 Photo ${L}${s.photos.length+1}</button><button class="secondary" data-act="gal" data-si="${si}">🖼️ Galerie</button></div></section>`;
+    const ph=s.photos.map((p,pi)=>`<div class="pcard"><img src="${p.image}" alt="Photo ${L}${pi+1}"><div class="pinfo"><b>${L}${pi+1}</b>${!S.hideTimes&&p.t>0?`<span class="ptime">⏱ ${fmtT(p.t)}</span>`:''}<p>${p.comment?esc(p.comment):'<i>Sans commentaire</i>'}</p></div><div class="pact"><button class="edit" data-act="edit" data-si="${si}" data-pi="${pi}" aria-label="Modifier ${L}${pi+1}">✏️</button><button class="del" data-act="delPhoto" data-si="${si}" data-pi="${pi}" aria-label="Supprimer ${L}${pi+1}">🗑</button></div></div>`).join('');
+    return `<section class="serie"><div class="serie-head"><span class="serie-badge">${L}</span><input class="serie-title" data-si="${si}" value="${esc(s.title)}" placeholder="Titre ${L}" aria-label="Titre ${L}">${!S.hideTimes&&serieMin(s)?`<span class="serie-time" title="Temps total ${L}">⏱ ${fmtT(serieMin(s))}</span>`:''}${S.series.length>1?`<button class="del-serie" data-act="delSerie" data-si="${si}" aria-label="Supprimer le titre ${L}">🗑</button>`:''}</div><div class="photos">${ph}</div><div class="add-row"><button class="blue" data-act="cam" data-si="${si}">📷 Photo ${L}${s.photos.length+1}</button><button class="secondary" data-act="gal" data-si="${si}">🖼️ Galerie</button></div></section>`;
   }).join('');
   $('addSerie').textContent='＋ Ajouter un titre '+letter(S.series.length);
   $('exports').hidden=!S.series.some(s=>s.photos.length);
+  const hide=S.hideTimes;$('totBadge').hidden=hide;$('totDetail').hidden=hide;
+  $('totBadge').textContent='⏱ '+fmtT(totalMin());
+  $('totDetail').textContent=S.series.map((s,i)=>[letter(i),serieMin(s)]).filter(a=>a[1]>0).map(a=>a[0]+' : '+fmtT(a[1])).join('   •   ');
 }
+const serieMin=s=>s.photos.reduce((a,p)=>a+(p&&p.t>0?p.t:0),0);
+const totalMin=()=>S.series.reduce((a,s)=>a+serieMin(s),0);
+const fmtT=m=>{m=Math.round(m);if(m<=0)return'0 min';const h=Math.floor(m/60),r=m%60;return h?(r?h+' h '+String(r).padStart(2,'0')+' min':h+' h'):r+' min'};
 $('series').addEventListener('input',e=>{const t=e.target.closest('.serie-title');if(t){S.series[+t.dataset.si].title=t.value;autoSave()}});
 $('series').addEventListener('click',e=>{
   const b=e.target.closest('[data-act]');if(!b)return;
   const si=+b.dataset.si,pi=+b.dataset.pi,a=b.dataset.act,s=S.series[si];
   if(a==='cam'){target={si};openCamera()}
   else if(a==='gal'){target={si};$('file').click()}
-  else if(a==='edit'){const p=s.photos[pi];openEditor(si,pi,p.orig||p.image,p.orig?JSON.parse(JSON.stringify(p.marks||[])):[],p.orig||p.image,p.comment)}
+  else if(a==='edit'){const p=s.photos[pi];openEditor(si,pi,p.orig||p.image,p.orig?JSON.parse(JSON.stringify(p.marks||[])):[],p.orig||p.image,p.comment,p.t)}
   else if(a==='delPhoto'){if(confirm('Supprimer la photo '+letter(si)+(pi+1)+' ?')){s.photos.splice(pi,1);render();saveNow()}}
   else if(a==='delSerie'){if((s.photos.length||s.title)&&!confirm('Supprimer le titre '+letter(si)+' et ses '+s.photos.length+' photo(s) ?'))return;S.series.splice(si,1);render();saveNow()}
 });
@@ -318,10 +343,11 @@ window.addEventListener('pagehide',stopCamera);
 /* ===== Éditeur photo (croix et ronds rouges) ===== */
 function setZoom(z){ed.zoom=Math.max(.5,Math.min(4,z));c.style.width=(ed.zoom*100)+'%';$('zoomVal').textContent=Math.round(ed.zoom*100)+' %'}
 function setMode(m){ed.mode=m;$('cross').classList.toggle('active',m==='x');$('circle').classList.toggle('active',m==='o');$('canvasWrap').classList.toggle('drawing',!!m)}
-function openEditor(si,pi,src,marks,origUrl,comment){
+function openEditor(si,pi,src,marks,origUrl,comment,t){
   ed={si,pi,marks,mode:null,zoom:1,origUrl,start:null,draft:null,img:null};
   $('edLabel').textContent=letter(si)+((pi<0?S.series[si].photos.length:pi)+1);
   $('edComment').value=comment||'';
+  $('edH').value=t>0?Math.floor(t/60)||'':'';$('edM').value=t>0?(t%60||(t<60?'':'')):'';
   const im=new Image;
   im.onload=()=>{
     ed.img=im;const r=Math.min(1,1600/im.width);
@@ -357,7 +383,7 @@ $('edOk').onclick=()=>{
   if(!ed||!ed.img)return;
   ed.draft=null;draw();
   const s=S.series[ed.si],old=ed.pi>=0?s.photos[ed.pi]:null;
-  const p={id:old?old.id:uid(),image:c.toDataURL('image/jpeg',.82),orig:ed.marks.length?ed.origUrl:null,marks:ed.marks.length?ed.marks:[],comment:$('edComment').value.trim(),w:c.width,h:c.height};
+  const p={id:old?old.id:uid(),image:c.toDataURL('image/jpeg',.82),orig:ed.marks.length?ed.origUrl:null,marks:ed.marks.length?ed.marks:[],comment:$('edComment').value.trim(),w:c.width,h:c.height,t:((parseInt($('edH').value)||0)*60+(parseInt($('edM').value)||0))||null};
   if(old)s.photos[ed.pi]=p;else s.photos.push(p);
   closeEditor();render();saveNow();
 };
@@ -389,106 +415,192 @@ async function saveFile(blob,name){
 const slug=s=>(s||'rapport').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40)||'rapport';
 const fname=ext=>'rapport-'+slug(S.title)+'-'+(S.date||today())+'.'+ext;
 const loadImg=src=>new Promise((res,rej)=>{const i=new Image;i.onload=()=>res(i);i.onerror=rej;i.src=src});
-async function ensureDims(){for(const s of S.series)for(const p of s.photos)if(!p.w){const i=await loadImg(p.image);p.w=i.naturalWidth;p.h=i.naturalHeight}}
-const fit=(w,h,mw,mh)=>{const r=Math.min(mw/w,mh/h);return[w*r,h*r]};
 const u8=du=>{const b=atob(du.split(',')[1]),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a};
 const hasContent=s=>s.photos.length||s.title.trim();
+/* Toutes les photos exportées ont le même cadre 4:3 (photo entière, fond neutre) */
+async function framedAll(){
+  const m=new Map();
+  for(const s of S.series)for(const p of s.photos){
+    const im=await loadImg(p.image),cv=document.createElement('canvas');cv.width=960;cv.height=720;
+    const g=cv.getContext('2d');g.fillStyle='#eeeae2';g.fillRect(0,0,960,720);
+    const r=Math.min(960/im.naturalWidth,720/im.naturalHeight),w=im.naturalWidth*r,h=im.naturalHeight*r;
+    g.drawImage(im,(960-w)/2,(720-h)/2,w,h);m.set(p.id,cv.toDataURL('image/jpeg',.82));
+  }
+  return m;
+}
+const chunk3=a=>{const r=[];for(let i=0;i<a.length;i+=3)r.push(a.slice(i,i+3).map((p,k)=>({p,n:i+k+1})));return r};
 
-/* ===== Export Word ===== */
+/* ===== Export Word (.docx généré sans bibliothèque externe) ===== */
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc32=d=>{let c=-1;for(let i=0;i<d.length;i++)c=CRC[(c^d[i])&255]^(c>>>8);return(c^-1)>>>0};
+function zipStore(files){
+  const enc=new TextEncoder(),parts=[],cen=[];let off=0;
+  const d=new Date(),dt=((d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1)),dd=(((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate());
+  files.forEach(f=>{
+    const nm=enc.encode(f.name),data=f.data,crc=crc32(data);
+    const lh=new DataView(new ArrayBuffer(30));
+    lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);lh.setUint16(8,0,true);lh.setUint16(10,dt,true);lh.setUint16(12,dd,true);
+    lh.setUint32(14,crc,true);lh.setUint32(18,data.length,true);lh.setUint32(22,data.length,true);lh.setUint16(26,nm.length,true);lh.setUint16(28,0,true);
+    parts.push(lh.buffer,nm,data);
+    const ch=new DataView(new ArrayBuffer(46));
+    ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);ch.setUint16(10,0,true);ch.setUint16(12,dt,true);ch.setUint16(14,dd,true);
+    ch.setUint32(16,crc,true);ch.setUint32(20,data.length,true);ch.setUint32(24,data.length,true);ch.setUint16(28,nm.length,true);ch.setUint32(42,off,true);
+    cen.push(ch.buffer,nm);
+    off+=30+nm.length+data.length;
+  });
+  const cs=cen.reduce((a,b)=>a+(b.byteLength!==undefined?b.byteLength:b.length),0);
+  const e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
+  return new Blob([...parts,...cen,e.buffer],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+}
+const X=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const wRun=(t,o={})=>`<w:r><w:rPr>${o.b?'<w:b/>':''}${o.i?'<w:i/>':''}${o.c?`<w:color w:val="${o.c}"/>`:''}<w:sz w:val="${o.s||22}"/><w:szCs w:val="${o.s||22}"/></w:rPr>${o.tab?'<w:tab/>':''}<w:t xml:space="preserve">${X(t)}</w:t></w:r>`;
+const wPara=(inner,o={})=>`<w:p><w:pPr>${o.kn?'<w:keepNext/>':''}${o.bdr||''}${o.shd?`<w:shd w:val="clear" w:color="auto" w:fill="${o.shd}"/>`:''}${o.tabs||''}<w:spacing w:before="${o.sb||0}" w:after="${o.sa||0}"/>${o.jc?`<w:jc w:val="${o.jc}"/>`:''}</w:pPr>${inner}</w:p>`;
+const NOB='<w:tcBorders><w:top w:val="nil"/><w:left w:val="nil"/><w:bottom w:val="nil"/><w:right w:val="nil"/></w:tcBorders>';
+const LINEB='<w:tcBorders>'+['top','left','bottom','right'].map(s=>`<w:${s} w:val="single" w:sz="4" w:space="0" w:color="D9CBB5"/>`).join('')+'</w:tcBorders>';
+const wCell=(w,inner,o={})=>`<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>${o.nob?NOB:LINEB}${o.shd?`<w:shd w:val="clear" w:color="auto" w:fill="${o.shd}"/>`:''}<w:tcMar><w:top w:w="${o.m==null?60:o.m}" w:type="dxa"/><w:left w:w="${o.m==null?80:o.m}" w:type="dxa"/><w:bottom w:w="${o.m==null?60:o.m}" w:type="dxa"/><w:right w:w="${o.m==null?80:o.m}" w:type="dxa"/></w:tcMar>${o.va?`<w:vAlign w:val="${o.va}"/>`:''}</w:tcPr>${inner}</w:tc>`;
+const wTbl=(cols,rows)=>`<w:tbl><w:tblPr><w:tblW w:w="${cols.reduce((a,b)=>a+b,0)}" w:type="dxa"/><w:tblLayout w:type="fixed"/></w:tblPr><w:tblGrid>${cols.map(w=>`<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>${rows}</w:tbl>`;
+const wRow=cells=>`<w:tr><w:trPr><w:cantSplit/></w:trPr>${cells}</w:tr>`;
+
 $('exportWord').onclick=async()=>{
-  if(!window.docx)return alert('Module Word indisponible. Vérifiez la connexion Internet puis réessayez.');
   try{
-    await ensureDims();
-    const D=window.docx,{Document,Packer,Paragraph,TextRun,ImageRun,Table,TableRow,TableCell,WidthType,BorderStyle,AlignmentType,Footer,PageNumber,ShadingType,VerticalAlign,TableLayoutType}=D;
-    const bn=$('bannerImg'),[bw,bh]=fit(bn.naturalWidth,bn.naturalHeight,380,160);
-    const kids=[];
-    kids.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{after:200},children:[new ImageRun({data:u8(bn.src),transformation:{width:bw,height:bh}})]}));
-    kids.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{before:120,after:80},children:[new TextRun({text:S.title||'Rapport',bold:true,size:44,color:'281936'})]}));
-    kids.push(new Paragraph({alignment:AlignmentType.CENTER,spacing:{after:240},border:{bottom:{style:BorderStyle.SINGLE,size:12,color:'D29F5C',space:8}},children:[new TextRun({text:'Fait par : '+(S.name||'—'),bold:true,size:22}),new TextRun({text:'     •     Date : '+fmtDate(S.date),size:22})]}));
-    if(S.comment.trim()){
-      const sh={type:ShadingType.CLEAR,fill:'F3E6D0',color:'auto'},bd={left:{style:BorderStyle.SINGLE,size:24,color:'D29F5C',space:8}};
-      kids.push(new Paragraph({shading:sh,border:bd,spacing:{before:60,after:0},children:[new TextRun({text:'Commentaire général',bold:true,color:'281936',size:22})]}));
-      S.comment.trim().split(/\n/).forEach((l,i,a)=>kids.push(new Paragraph({shading:sh,border:bd,spacing:{after:i===a.length-1?240:0},children:[new TextRun({text:l,size:22})]})));
+    const hide=S.hideTimes,frames=await framedAll(),bn=$('bannerImg');
+    const files=[],rels=[];let nImg=0;
+    const addImg=(du,cx,cy)=>{
+      nImg++;const rid='rIdImg'+nImg,nm='image'+nImg+'.jpg';
+      files.push({name:'word/media/'+nm,data:u8(du)});
+      rels.push(`<Relationship Id="${rid}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${nm}"/>`);
+      return `<w:r><w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${nImg}" name="Image ${nImg}"/><wp:cNvGraphicFramePr><a:graphicFrameLocks xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" noChangeAspect="1"/></wp:cNvGraphicFramePr><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="${nImg}" name="${nm}"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${rid}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`;
+    };
+    const MM=36000,FULL=10206;
+    let body='';
+    const bh=30,bw=bh*bn.naturalWidth/bn.naturalHeight;
+    body+=wTbl([FULL],wRow(wCell(FULL,wPara(addImg(bn.src,Math.round(bw*MM),bh*MM),{jc:'center'}),{shd:'1E0D2E',nob:1,m:0})));
+    const meta='Fait par : '+(S.name||'—')+'     •     Date : '+fmtDate(S.date);
+    const titleP=wPara(wRun(S.title||'Rapport',{b:1,s:40,c:'281936'}),{sb:160,sa:40})+wPara(wRun(meta,{s:21,c:'3B2F48'}),{sa:60});
+    if(hide){body+=titleP}
+    else{
+      const det=S.series.map((s,i)=>[letter(i),serieMin(s)]).filter(a=>a[1]>0);
+      const box=wPara(wRun('Temps total',{s:16,c:'7A5B2C'}),{jc:'center'})+wPara(wRun(fmtT(totalMin()),{b:1,s:30,c:'281936'}),{jc:'center'})+det.map(a=>wPara(wRun(a[0]+' : '+fmtT(a[1]),{s:16,c:'3B2F48'}),{jc:'center'})).join('');
+      body+=wTbl([7000,FULL-7000],wRow(wCell(7000,titleP,{nob:1,m:0})+wCell(FULL-7000,box,{nob:1,shd:'F3E6D0',m:80,va:'center'})));
     }
-    const line={style:BorderStyle.SINGLE,size:4,color:'D9CBB5'},cb={top:line,bottom:line,left:line,right:line};
+    body+=wPara('',{sa:60,bdr:'<w:pBdr><w:bottom w:val="single" w:sz="12" w:space="1" w:color="D29F5C"/></w:pBdr>'});
+    if(S.comment.trim()){
+      const bd='<w:pBdr><w:left w:val="single" w:sz="24" w:space="8" w:color="D29F5C"/></w:pBdr>';
+      body+=wPara(wRun('Commentaire général',{b:1,s:21,c:'281936'}),{shd:'F3E6D0',bdr:bd,sb:100});
+      const ls=S.comment.trim().split(/\n/);
+      ls.forEach((l,i)=>{body+=wPara(wRun(l,{s:21}),{shd:'F3E6D0',bdr:bd,sa:i===ls.length-1?140:0})});
+    }
+    const CW=3402;
     S.series.forEach((s,si)=>{
       if(!hasContent(s))return;
-      const L=letter(si);
-      kids.push(new Paragraph({keepNext:true,spacing:{before:320,after:140},shading:{type:ShadingType.CLEAR,fill:'281936',color:'auto'},children:[new TextRun({text:'  '+L+'   ',bold:true,color:'D29F5C',size:30}),new TextRun({text:s.title.trim()||'Sans titre',bold:true,color:'FFFFFF',size:28})]}));
-      s.photos.forEach((p,pi)=>{
-        const [w,h]=fit(p.w,p.h,285,225);
-        const lines=(p.comment||'Sans commentaire').split(/\n/);
-        kids.push(new Table({width:{size:9638,type:WidthType.DXA},columnWidths:[4600,5038],layout:TableLayoutType.FIXED,rows:[new TableRow({cantSplit:true,children:[
-          new TableCell({width:{size:4600,type:WidthType.DXA},borders:cb,verticalAlign:VerticalAlign.CENTER,margins:{top:100,bottom:100,left:120,right:120},children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new ImageRun({data:u8(p.image),transformation:{width:w,height:h}})]})]}),
-          new TableCell({width:{size:5038,type:WidthType.DXA},borders:cb,verticalAlign:VerticalAlign.TOP,margins:{top:100,bottom:100,left:160,right:120},children:[new Paragraph({spacing:{after:100},children:[new TextRun({text:L+(pi+1),bold:true,size:30,color:'281936'})]}),...lines.map(l=>new Paragraph({spacing:{after:60},children:[new TextRun({text:l,size:22,italics:!p.comment,color:p.comment?'17212B':'64748B'})]}))]})
-        ]})]}));
-        kids.push(new Paragraph({spacing:{after:120},children:[]}));
-      });
+      const L=letter(si),st=!hide&&serieMin(s)>0;
+      body+=wPara(wRun('  '+L+'   ',{b:1,s:30,c:'D29F5C'})+wRun(s.title.trim()||'Sans titre',{b:1,s:26,c:'FFFFFF'})+(st?wRun('Temps : '+fmtT(serieMin(s))+'  ',{b:1,s:19,c:'E8C48F',tab:1}):''),{kn:1,shd:'281936',sb:200,sa:100,tabs:'<w:tabs><w:tab w:val="right" w:pos="10100"/></w:tabs>'});
+      const rows=chunk3(s.photos).map(r=>{
+        let cs='';
+        for(let k=0;k<3;k++){
+          const o=r[k];
+          if(!o){cs+=wCell(CW,wPara(''),{nob:1});continue}
+          const p=o.p;
+          const head=wRun(L+o.n,{b:1,s:22,c:'281936'})+(!hide&&p.t>0?wRun('     '+fmtT(p.t),{s:17,c:'7A5B2C'}):'');
+          cs+=wCell(CW,wPara(addImg(frames.get(p.id),56*MM,42*MM),{jc:'center',sa:40})+wPara(head,{sa:20})+(p.comment||'Sans commentaire').split(/\n/).map(l=>wPara(wRun(l,{s:17,i:!p.comment,c:p.comment?'17212B':'64748B'}))).join(''),{va:'top'});
+        }
+        return wRow(cs);
+      }).join('');
+      if(rows)body+=wTbl([CW,CW,CW],rows);
+      body+=wPara('',{sa:40});
     });
-    const doc=new Document({creator:S.name||'Rapport',title:S.title||'Rapport',
-      styles:{default:{document:{run:{font:'Calibri',size:22}}}},
-      sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:850,bottom:850,left:1134,right:1134}}},
-        footers:{default:new Footer({children:[new Paragraph({alignment:AlignmentType.CENTER,children:[new TextRun({text:'© By D@V • '+APP_VERSION+' • Page ',size:16,color:'969696'}),new TextRun({children:[PageNumber.CURRENT],size:16,color:'969696'}),new TextRun({text:' / ',size:16,color:'969696'}),new TextRun({children:[PageNumber.TOTAL_PAGES],size:16,color:'969696'})]})]})},
-        children:kids}]});
-    saveFile(await Packer.toBlob(doc),fname('docx'));
+    const NS='xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"';
+    const doc=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document ${NS}><w:body>${body}<w:sectPr><w:footerReference w:type="default" r:id="rIdFoot"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="680" w:right="850" w:bottom="800" w:left="850" w:header="400" w:footer="400" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+    const foot=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr ${NS}>${wPara(wRun('© By D@V • '+APP_VERSION+' • Page ',{s:16,c:'969696'})+'<w:fldSimple w:instr="PAGE"><w:r><w:rPr><w:sz w:val="16"/><w:color w:val="969696"/></w:rPr><w:t>1</w:t></w:r></w:fldSimple>'+wRun(' / ',{s:16,c:'969696'})+'<w:fldSimple w:instr="NUMPAGES"><w:r><w:rPr><w:sz w:val="16"/><w:color w:val="969696"/></w:rPr><w:t>1</w:t></w:r></w:fldSimple>',{jc:'center'})}</w:ftr>`;
+    const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:sz w:val="22"/><w:lang w:val="fr-FR"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="0" w:line="240" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/></w:style></w:styles>`;
+    const REL='http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+    const enc=new TextEncoder();
+    files.unshift(
+      {name:'[Content_Types].xml',data:enc.encode('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="jpg" ContentType="image/jpeg"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/></Types>')},
+      {name:'_rels/.rels',data:enc.encode(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="${REL}/officeDocument" Target="word/document.xml"/></Relationships>`)},
+      {name:'word/document.xml',data:enc.encode(doc)},
+      {name:'word/styles.xml',data:enc.encode(styles)},
+      {name:'word/footer1.xml',data:enc.encode(foot)},
+      {name:'word/_rels/document.xml.rels',data:enc.encode(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rIdSty" Type="${REL}/styles" Target="styles.xml"/><Relationship Id="rIdFoot" Type="${REL}/footer" Target="footer1.xml"/>${rels.join('')}</Relationships>`)}
+    );
+    saveFile(zipStore(files),fname('docx'));
   }catch(e){console.error(e);alert('Erreur lors de la création du fichier Word.')}
 };
 
-/* ===== Export PDF ===== */
+/* ===== Export PDF : photos de même taille, 3 par ligne, titres jamais orphelins ===== */
 $('exportPdf').onclick=async()=>{
   if(!window.jspdf)return alert('Module PDF indisponible. Vérifiez la connexion Internet puis réessayez.');
   try{
-    await ensureDims();
+    const frames=await framedAll(),hide=S.hideTimes;
     const {jsPDF}=window.jspdf,pdf=new jsPDF('p','mm','a4'),bn=$('bannerImg');
     const meta='Fait par : '+(S.name||'—')+'   •   Date : '+fmtDate(S.date);
+    const BOT=284,CW=60,GAP=5,IH=45;
     let y=0;
+    pdf.setLineHeightFactor(1.2);
     function head(){
       if(pdf.getNumberOfPages()===1){
-        const bh=58,bw=bh*bn.naturalWidth/bn.naturalHeight;
+        const bh=30,bw=bh*bn.naturalWidth/bn.naturalHeight;
         pdf.setFillColor(30,13,46);pdf.rect(0,0,210,bh,'F');pdf.addImage(bn.src,'JPEG',(210-bw)/2,0,bw,bh);
-        pdf.setTextColor(40,25,54);pdf.setFont('helvetica','bold');pdf.setFontSize(17);
-        pdf.text(pdf.splitTextToSize(S.title||'Rapport',180),105,bh+11,{align:'center'});
-        const tl=pdf.splitTextToSize(S.title||'Rapport',180).length;let yy=bh+11+(tl-1)*7;
-        pdf.setFontSize(10.5);pdf.text(meta,105,yy+8,{align:'center'});
-        pdf.setDrawColor(210,159,92);pdf.setLineWidth(.6);pdf.line(14,yy+12,196,yy+12);
-        y=yy+19;
+        pdf.setTextColor(40,25,54);pdf.setFont('helvetica','bold');pdf.setFontSize(16);
+        const tl=pdf.splitTextToSize(S.title||'Rapport',hide?182:128);
+        pdf.text(tl,14,bh+10);
+        const yy=bh+10+(tl.length-1)*6.5;
+        pdf.setFont('helvetica','normal');pdf.setFontSize(10);pdf.text(meta,14,yy+7);
+        let bottom=yy+7;
+        if(!hide){
+          const det=S.series.map((s,i)=>[letter(i),serieMin(s)]).filter(a=>a[1]>0),bx=148,by=bh+4,bwid=48,bhh=16+det.length*3.4;
+          pdf.setFillColor(243,230,208);pdf.rect(bx,by,bwid,bhh,'F');pdf.setFillColor(210,159,92);pdf.rect(bx,by,1.6,bhh,'F');
+          pdf.setFont('helvetica','normal');pdf.setFontSize(7.5);pdf.setTextColor(122,91,44);pdf.text('Temps total',bx+bwid/2+.8,by+4.6,{align:'center'});
+          pdf.setFont('helvetica','bold');pdf.setFontSize(13);pdf.setTextColor(40,25,54);pdf.text(fmtT(totalMin()),bx+bwid/2+.8,by+10.8,{align:'center'});
+          pdf.setFont('helvetica','normal');pdf.setFontSize(7);pdf.setTextColor(59,47,72);
+          det.forEach((a,i)=>pdf.text(a[0]+' : '+fmtT(a[1]),bx+bwid/2+.8,by+15+i*3.4,{align:'center'}));
+          bottom=Math.max(bottom,by+bhh);
+        }
+        pdf.setDrawColor(210,159,92);pdf.setLineWidth(.6);pdf.line(14,bottom+3.5,196,bottom+3.5);y=bottom+8;
         if(S.comment.trim()){
-          const ls=pdf.splitTextToSize(S.comment.trim(),172);
           pdf.setFont('helvetica','normal');pdf.setFontSize(9.5);
-          const hh=ls.length*4.6+11;
+          const ls=pdf.splitTextToSize(S.comment.trim(),172),hh=ls.length*4.6+11;
           pdf.setFillColor(243,230,208);pdf.rect(10,y,190,hh,'F');pdf.setFillColor(210,159,92);pdf.rect(10,y,1.8,hh,'F');
           pdf.setFont('helvetica','bold');pdf.setTextColor(40,25,54);pdf.text('Commentaire général',16,y+6);
           pdf.setFont('helvetica','normal');pdf.setTextColor(30);pdf.text(ls,16,y+11.5);
-          y+=hh+6;
+          y+=hh+5;
         }
       }else{
         pdf.setFillColor(30,13,46);pdf.rect(0,0,210,13,'F');
         pdf.setTextColor(232,196,143);pdf.setFont('helvetica','bold');pdf.setFontSize(9);
         pdf.text((S.title||'Rapport')+'   •   '+meta,105,8,{align:'center',maxWidth:190});
-        y=20;
+        y=19;
       }
     }
     head();
     S.series.forEach((s,si)=>{
       if(!hasContent(s))return;
-      const L=letter(si);
-      if(y>235){pdf.addPage();head()}
+      const L=letter(si),st=!hide&&serieMin(s)>0;
+      pdf.setFont('helvetica','normal');pdf.setFontSize(8);
+      const rows=chunk3(s.photos).map(r=>r.map(o=>({...o,lines:pdf.splitTextToSize(o.p.comment||'Sans commentaire',CW-2)})));
+      const rowH=r=>IH+11+Math.max(...r.map(o=>o.lines.length))*3.5+2;
+      if(y+13+(rows[0]?rowH(rows[0]):0)>BOT){pdf.addPage();head()}
       pdf.setFillColor(40,25,54);pdf.roundedRect(10,y,190,9.5,2,2,'F');
       pdf.setFillColor(210,159,92);pdf.circle(17,y+4.75,3.4,'F');
       pdf.setTextColor(40,25,54);pdf.setFont('helvetica','bold');pdf.setFontSize(10);pdf.text(L,17,y+6.2,{align:'center'});
       pdf.setTextColor(255);pdf.setFontSize(11);
-      pdf.text(pdf.splitTextToSize(s.title.trim()||'Sans titre',165)[0],24,y+6.5);
-      y+=14;
-      s.photos.forEach((p,pi)=>{
-        const lines=pdf.splitTextToSize(p.comment||'Sans commentaire',96);
-        const [iw,ih]=fit(p.w,p.h,84,62),ch=Math.max(ih+8,lines.length*4.7+22);
-        if(y+ch>280){pdf.addPage();head()}
-        pdf.setFillColor(248,245,240);pdf.roundedRect(10,y,190,ch,3,3,'F');
-        pdf.addImage(p.image,'JPEG',14+(84-iw)/2,y+4,iw,ih);
-        pdf.setTextColor(40,25,54);pdf.setFont('helvetica','bold');pdf.setFontSize(13);pdf.text(L+(pi+1),104,y+10);
-        pdf.setFont('helvetica',p.comment?'normal':'italic');pdf.setFontSize(10);pdf.setTextColor(p.comment?25:120);
-        pdf.text(lines,104,y+18);
-        y+=ch+5;
+      pdf.text(pdf.splitTextToSize(s.title.trim()||'Sans titre',st?118:165)[0],24,y+6.5);
+      if(st){pdf.setTextColor(232,196,143);pdf.setFontSize(9.5);pdf.text('Temps : '+fmtT(serieMin(s)),196,y+6.4,{align:'right'})}
+      y+=13;
+      rows.forEach(r=>{
+        const h=rowH(r);
+        if(y+h>BOT){pdf.addPage();head()}
+        r.forEach((o,k)=>{
+          const p=o.p,cx=10+k*(CW+GAP);
+          pdf.addImage(frames.get(p.id),'JPEG',cx,y,CW,IH);
+          pdf.setDrawColor(217,203,181);pdf.setLineWidth(.2);pdf.rect(cx,y,CW,IH);
+          pdf.setFont('helvetica','bold');pdf.setFontSize(10);pdf.setTextColor(40,25,54);pdf.text(L+o.n,cx,y+IH+5);
+          if(!hide&&p.t>0){pdf.setFont('helvetica','normal');pdf.setFontSize(8.5);pdf.setTextColor(122,91,44);pdf.text(fmtT(p.t),cx+CW,y+IH+5,{align:'right'})}
+          pdf.setFont('helvetica',p.comment?'normal':'italic');pdf.setFontSize(8);pdf.setTextColor(p.comment?25:120);
+          pdf.text(o.lines,cx,y+IH+9.5);
+        });
+        y+=h+3;
       });
       y+=3;
     });
