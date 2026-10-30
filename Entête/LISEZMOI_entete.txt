@@ -1,0 +1,17 @@
+ENTÊTE – fichiers extraits
+==========================
+entete_onore_rapport.png            Bandeau actuel avec le libellé « Rapport » (1100 × 457 px)
+entete_onore_sans_texte.png         Bandeau sans libellé (1100 × 457 px) : logos Onoré + Boncolac seuls
+entete_origine_visite_securite.png  Bandeau d'origine « Visite sécurité » (1100 × 457 px)
+logo_onore.png / logo_boncolac.png  Logos découpés dans le bandeau (fond violet, non transparent)
+gabarit_logo_1500x400.png           Gabarit : zone à respecter pour un nouveau logo
+gabarit_logo_transparent_cadre.png  Même cadre sur fond transparent (à poser sous votre logo)
+
+LOGO À FOURNIR (Paramètres > Bandeau et logo > Importer mon logo)
+- Format : PNG, fond transparent (JPG et WebP acceptés)
+- Dimensions : 1500 × 400 px (rapport 3,75 : 1), minimum conseillé 600 px de large
+- Marge : 5 % autour du logo (zone utile 1350 × 360 px)
+- Couleurs : claires (blanc, or…) si le fond du bandeau est foncé
+- Poids conseillé : moins de 1 Mo
+- Dans l'application, le logo est ajusté dans une zone de 760 × 196 px du bandeau (900 × 374 px)
+Couleurs d'origine : fond du bandeau #1E0D2E · libellé #FFFFFF · barres de section #281936
