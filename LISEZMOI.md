@@ -1,6 +1,6 @@
 # Rapport – mise en place
 
-Application web installable (Android, iPhone/iPad, PC) pour réaliser un rapport, une procédure ou un inventaire avec photos annotées et commentaires, exportable en **Excel, Word et PDF**. Elle fonctionne hors ligne une fois installée. Version **v1.8.0**.
+Application web installable (Android, iPhone/iPad, PC) pour réaliser un rapport, une procédure ou un inventaire avec photos annotées et commentaires, exportable en **Excel, Word et PDF**. Elle fonctionne hors ligne une fois installée. Version **v1.9.0**.
 
 ## 1. Fichiers à publier
 À la racine du dépôt GitHub (le dépôt doit être public) :
@@ -34,7 +34,7 @@ Puis : *Settings → Pages* → Source : branche `main`, dossier `/ (root)`. L�
 
 ## 4. Page Paramètres
 Aperçu de page dessiné à main levée qui suit vos choix. Réglages :
-- **Bandeau** sous Onoré : Procédure, Rapport (défaut), Inventaire ou libellé personnalisé. Ce libellé préfixe aussi le nom des fichiers (ex. `Inventaire_titre_261029.pdf`).
+- **Bandeau et logo** : libellé sous le logo (Procédure, Rapport par défaut, Inventaire ou personnalisé ; il préfixe aussi le nom des fichiers, ex. `Inventaire_titre_261029.pdf`). **Importer mon logo** remplace Onoré / Boncolac ; « Logo d’origine » le rétablit. Logo à respecter : **PNG à fond transparent, 1500 × 400 px** (3,75 : 1), marge de 5 %, couleurs claires si le fond est foncé, moins de 1 Mo ; il est ajusté dans une zone de 760 × 196 px du bandeau (900 × 374 px). Trois **couleurs** modifiables : fond du bandeau (avec un logo personnalisé), libellé, barres de section ; « Couleurs d’origine » les rétablit. « Enregistrer le bandeau (image PNG) » exporte le bandeau actuel. Le gabarit et l’entête extraits sont dans `entete.zip`.
 - **Numérotation** des sections (lettres, chiffres, rien, puces) et des photos (A1, chiffres, lettres, rien, puces).
 - **Affichage** : commentaire de début de section ; photos affichées ou non (décochées, chaque section ne reçoit plus que des commentaires, via le bouton « Commentaire ») ; contenu « photo et commentaire », « photo seule » ou « commentaire seul » (exports et aperçu). En mode commentaire seul, les lignes par page ne sont plus prises en compte.
 - **Temps et chronos** : masquer tous les temps, chrono 2, chrono par photo.
@@ -52,7 +52,7 @@ Aperçu de page dessiné à main levée qui suit vos choix. Réglages :
 
 ## 6. Mises à jour et version
 - Le service worker renouvelle l’application dès qu’Internet est disponible ; un message propose de recharger. « Vérifier la mise à jour » force la vérification.
-- Pour publier une nouvelle version, modifier le numéro dans `sw.js` (`const VERSION='v1.8.0'` et la première ligne de commentaire) et dans `index.html` (`const APP_VERSION='v1.8.0';const APP_DATE='30/10/2026';`).
+- Pour publier une nouvelle version, modifier le numéro dans `sw.js` (`const VERSION='v1.9.0'` et la première ligne de commentaire) et dans `index.html` (`const APP_VERSION='v1.9.0';const APP_DATE='30/10/2026';`).
 
 ## 7. Bibliothèques externes (mises en cache pour le hors ligne)
 `jsPDF 2.5.2` (PDF), chargée depuis cdn.jsdelivr.net, et la police Inter (Google Fonts). La première ouverture doit se faire avec Internet. Les exports Word et Excel sont générés directement par l’application, sans bibliothèque.
