@@ -1,5 +1,5 @@
-// Rapport - v1.6.1 - 30/10/2026
-const VERSION='v1.6.1';
+// Rapport - v1.8.0 - 30/10/2026
+const VERSION='v1.8.0';
 const CACHE='rapport-'+VERSION;
 const APP_FILES=[
   './','./index.html','./manifest.webmanifest',

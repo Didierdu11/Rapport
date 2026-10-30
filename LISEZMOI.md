@@ -1,6 +1,6 @@
 # Rapport – mise en place
 
-Application web installable (Android, iPhone/iPad, PC) pour réaliser un rapport, une procédure ou un inventaire avec photos annotées et commentaires, exportable en **Excel, Word et PDF**. Elle fonctionne hors ligne une fois installée. Version **v1.6.1**.
+Application web installable (Android, iPhone/iPad, PC) pour réaliser un rapport, une procédure ou un inventaire avec photos annotées et commentaires, exportable en **Excel, Word et PDF**. Elle fonctionne hors ligne une fois installée. Version **v1.8.0**.
 
 ## 1. Fichiers à publier
 À la racine du dépôt GitHub (le dépôt doit être public) :
@@ -26,6 +26,12 @@ Puis : *Settings → Pages* → Source : branche `main`, dossier `/ (root)`. L�
 5. **Temps** : hh/min par photo, somme par section, total à côté du titre général. **Chrono 1** (bouton en haut), **Chrono 2** (à gauche, option) et **chrono par photo** (option, uniquement dans l’édition d’une photo). Chronos flottants, déplaçables, fixes à l’écran ; Départ / Arrêt, puis **0** pour remettre à zéro ; Départ reprend là où il s’était arrêté. Dans l’éditeur, les boutons « Chrono 1 », « Chrono 2 » et « Chrono photo » copient leur temps dans hh/min. Le **chrono photo** continue de tourner après « Valider la photo » : une icône rouge clignotante s’affiche sur la photo et sur sa section ; toucher cette icône **arrête** le chrono et **enregistre son temps dans la photo** (sur l’icône d’une section : tous ses chronos photo s’arrêtent). Dans l’éditeur, le bouton « Chrono photo » l’arrête aussi et copie son temps dans hh/min. Avant d’enregistrer ou d’envoyer, l’application vérifie qu’aucun chrono ne tourne et, sinon, indique la photo et le n° de section concernés. « Masquer tous les temps » (dans Paramètres) les retire partout (écran, éditeur, chronos, exports).
 6. **Sauvegarde automatique** sur l’appareil. Photos compressées à 80 % (JPEG).
 
+## 3 bis. Rapports enregistrés
+- Chaque rapport est conservé sur le téléphone. « Nouveau rapport » ne supprime plus rien : le rapport en cours est mis de côté.
+- Le bouton **Rapports** (en haut) liste les rapports (nom de fichier, date, nombre de photos, taille). **Ouvrir** reprend un rapport pour le modifier ; **Dupliquer** ouvre une copie datée du jour, l’original reste intact ; la corbeille supprime.
+- L’icône de téléchargement d’un rapport crée un fichier **.json** de sauvegarde ; « Importer un rapport (.json) » le remet dans la liste (pour changer de téléphone, par exemple).
+- Impossible de changer de rapport tant qu’un chrono photo tourne.
+
 ## 4. Page Paramètres
 Aperçu de page dessiné à main levée qui suit vos choix. Réglages :
 - **Bandeau** sous Onoré : Procédure, Rapport (défaut), Inventaire ou libellé personnalisé. Ce libellé préfixe aussi le nom des fichiers (ex. `Inventaire_titre_261029.pdf`).
@@ -35,6 +41,7 @@ Aperçu de page dessiné à main levée qui suit vos choix. Réglages :
 - **Champs supplémentaires par photo** : Outillage, Emplacement et jusqu’à 5 champs personnalisés.
 - **Nom des fichiers** : libellé + titre ou nom + date aammjj (+ numéro). Choix mémorisé.
 - **Exportations** : photos par ligne (1 à 4) et lignes par page (1 à 5), séparément pour le PDF et le Word.
+- **Dossier de stockage** : sur PC (Chrome ou Edge), « Choisir le dossier » y range les exports Excel/Word/PDF et permet d’y copier une sauvegarde .json de tous les rapports. Sur téléphone, le champ indique le dossier réel (Téléchargements) ; sous Android, Chrome → ⋮ → Paramètres → Téléchargements → « Demander où enregistrer les fichiers » permet de choisir le dossier à chaque export. Les rapports de la liste, eux, vivent dans la mémoire privée de l’application (aucun dossier visible).
 - **Bouton Envoyer** affiché ou non.
 
 ## 5. Exports et envoi
@@ -45,7 +52,7 @@ Aperçu de page dessiné à main levée qui suit vos choix. Réglages :
 
 ## 6. Mises à jour et version
 - Le service worker renouvelle l’application dès qu’Internet est disponible ; un message propose de recharger. « Vérifier la mise à jour » force la vérification.
-- Pour publier une nouvelle version, modifier le numéro dans `sw.js` (`const VERSION='v1.6.1'` et la première ligne de commentaire) et dans `index.html` (`const APP_VERSION='v1.6.1';const APP_DATE='30/10/2026';`).
+- Pour publier une nouvelle version, modifier le numéro dans `sw.js` (`const VERSION='v1.8.0'` et la première ligne de commentaire) et dans `index.html` (`const APP_VERSION='v1.8.0';const APP_DATE='30/10/2026';`).
 
 ## 7. Bibliothèques externes (mises en cache pour le hors ligne)
 `jsPDF 2.5.2` (PDF), chargée depuis cdn.jsdelivr.net, et la police Inter (Google Fonts). La première ouverture doit se faire avec Internet. Les exports Word et Excel sont générés directement par l’application, sans bibliothèque.
