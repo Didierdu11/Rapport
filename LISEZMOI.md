@@ -1,6 +1,6 @@
 # Rapport – mise en place
 
-Application web installable (Android, iPhone/iPad, PC) pour réaliser un rapport, une procédure ou un inventaire avec photos annotées et commentaires, exportable en **Excel, Word et PDF**. Elle fonctionne hors ligne une fois installée. Version **v1.11.1**.
+Application web installable (Android, iPhone/iPad, PC) pour réaliser un rapport, une procédure ou un inventaire avec photos annotées et commentaires, exportable en **Excel, Word et PDF**. Elle fonctionne hors ligne une fois installée. Version **v1.11.2**.
 
 ## 1. Fichiers à publier
 À la racine du dépôt GitHub (le dépôt doit être public) :
@@ -57,7 +57,7 @@ Aperçu de page dessiné à main levée qui suit vos choix. Réglages :
 
 ## 6. Mises à jour et version
 - Le service worker renouvelle l’application dès qu’Internet est disponible ; un message propose de recharger. « Vérifier la mise à jour » force la vérification.
-- Pour publier une nouvelle version, modifier le numéro dans `sw.js` (`const VERSION='v1.11.1'` et la première ligne de commentaire) et dans `index.html` (`const APP_VERSION='v1.11.1';const APP_DATE='30/10/2026';`).
+- Pour publier une nouvelle version, modifier le numéro dans `sw.js` (`const VERSION='v1.11.2'` et la première ligne de commentaire) et dans `index.html` (`const APP_VERSION='v1.11.2';const APP_DATE='30/10/2026';`).
 
 ## 7. Bibliothèques externes (mises en cache pour le hors ligne)
 `jsPDF 2.5.2` (PDF), chargée depuis cdn.jsdelivr.net, et la police Inter (Google Fonts). La première ouverture doit se faire avec Internet. Les exports Word et Excel sont générés directement par l’application, sans bibliothèque.
