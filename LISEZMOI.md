@@ -1,6 +1,6 @@
 # Rapport – mise en place
 
-Application web installable (Android, iPhone/iPad, PC) pour réaliser un rapport, une procédure ou un inventaire avec photos annotées et commentaires, exportable en **Excel, Word et PDF**. Elle fonctionne hors ligne une fois installée. Version **v1.12.0**.
+Application web installable (Android, iPhone/iPad, PC) pour réaliser un rapport, une procédure ou un inventaire avec photos annotées et commentaires, exportable en **Excel, Word et PDF**. Elle fonctionne hors ligne une fois installée. Version **v1.12.2**.
 
 ## 1. Fichiers à publier
 À la racine du dépôt GitHub (le dépôt doit être public) :
@@ -53,11 +53,11 @@ Aperçu de page dessiné à main levée qui suit vos choix. Réglages :
 - **Excel** : bandeau et titre en haut, puis une ligne par photo, photos en colonne, avec section, numéro, commentaire, temps, tags et champs. Signature en fin de feuille.
 - **Word** et **PDF** : en-tête Onoré avec le libellé choisi sur chaque page, titre, mention **« Réalisé par Didier le 12/11/2026 »** (nom et date du rapport), temps total, commentaire général, puis chaque section avec ses photos de même taille (tags et champs sous chaque photo) et, en fin de document, la signature si le rapport est signé. Une section n’est jamais seule en bas de page.
 - Les fichiers sont **enregistrés dans le téléphone** (Téléchargements sous Android ; sur iPhone, la feuille de partage propose « Enregistrer dans Fichiers »). Le nom prévu s’affiche sous les boutons.
-- **Envoyer** (bouton réglable dans les Paramètres) : cocher les fichiers, puis **Partager**. Le menu de partage du téléphone s’ouvre avec les fichiers déjà joints et un message pré-rempli (Gmail, WhatsApp, Drive…). Si le téléphone exige un second appui, les fichiers sont déjà prêts. Avertissement au-delà de 20 Mo. Sur ordinateur (partage de fichiers indisponible) : fichiers enregistrés puis message Mail à compléter à la main. Le partage nécessite l’application ouverte en HTTPS.
+- **Envoyer** (bouton réglable dans les Paramètres) : cocher les fichiers, puis **Partager**. Le menu de partage du téléphone s’ouvre avec les fichiers déjà joints et un message pré-rempli (Gmail, WhatsApp, Drive…). Les fichiers sont créés dès l’ouverture de la fenêtre. **Android n’autorise pas le partage direct des fichiers Word et Excel depuis un navigateur** : le PDF passe par le menu de partage ; Word et Excel s’enregistrent avec le bouton « Enregistrer Word / Excel » (dossier Téléchargements) puis se joignent à la main (trombone de Gmail, « + » puis Document dans WhatsApp). En cas d’échec du partage, le motif s’affiche, un essai simplifié est proposé, puis l’enregistrement des fichiers. Avertissement au-delà de 20 Mo. Sur ordinateur (partage de fichiers indisponible) : fichiers enregistrés puis message Mail à compléter à la main. Le partage nécessite l’application ouverte en HTTPS.
 
 ## 6. Mises à jour et version
 - Le service worker renouvelle l’application dès qu’Internet est disponible ; un message propose de recharger. « Vérifier la mise à jour » force la vérification.
-- Pour publier une nouvelle version, modifier le numéro dans `sw.js` (`const VERSION='v1.12.0'` et la première ligne de commentaire) et dans `index.html` (`const APP_VERSION='v1.12.0';const APP_DATE='30/10/2026';`).
+- Pour publier une nouvelle version, modifier le numéro dans `sw.js` (`const VERSION='v1.12.2'` et la première ligne de commentaire) et dans `index.html` (`const APP_VERSION='v1.12.2';const APP_DATE='30/10/2026';`).
 
 ## 7. Bibliothèques externes (mises en cache pour le hors ligne)
 `jsPDF 2.5.2` (PDF), chargée depuis cdn.jsdelivr.net, et la police Inter (Google Fonts). La première ouverture doit se faire avec Internet. Les exports Word et Excel sont générés directement par l’application, sans bibliothèque.
